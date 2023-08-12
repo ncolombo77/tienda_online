@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
+import { productsCollection } from "../../constants/index.js";
 
-// Nombre de la colección de productos.
-const productsCollection = "products";
 
 // Esquema de los productos.
 const productSchema = new mongoose.Schema({

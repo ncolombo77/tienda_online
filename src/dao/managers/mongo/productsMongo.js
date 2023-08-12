@@ -10,7 +10,7 @@ export class ProductsMongo {
     // Obtener todos los productos
     async get() {
         try {
-            const products = await this.model.find();
+            const products = await this.model.find().lean();
             return products;
         }
         catch(error) {

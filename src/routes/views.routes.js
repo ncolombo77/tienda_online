@@ -6,11 +6,15 @@ const productService = new ProductsMongo('products.json');
 const router = Router();
 
 router.get("/", async (req, res) => {
+    res.render("home");
+});
+
+
+router.get("/products", async (req, res) => {
 
     try {
         const products = await productService.get();
-
-        res.render("home", { products});
+        res.render("products", { products});
     }
     catch (error) {
         res.render("error", error);
