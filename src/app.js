@@ -6,11 +6,13 @@ import { engine } from "express-handlebars";
 import { __dirname } from "./utils.js";
 import path from 'path';
 import { Server } from "socket.io";
-import { ProductManager } from "./dao/productManager.js";
+import { ProductsMongo } from "./dao/managers/mongo/productsMongo.js";
 
 import { viewsRouter } from "./routes/views.routes.js";
 import { productsRouter } from "./routes/products.routes.js";
-import { cartsRouter } from "./routes/carts.routes.js";
+//import { cartsRouter } from "./routes/carts.routes.js";
+
+import { chatModel } from "./dao/models/chat.model.js";
 
 const port = config.server.port;
 const app = express();
@@ -34,7 +36,8 @@ app.set('views', path.join(__dirname, '/views'));
 app.use(viewsRouter);
 
 app.use("/api/products", productsRouter);
-app.use("/api/carts", cartsRouter);
+//app.use("/api/carts", cartsRouter);
+
 
 socketServer.on("connection", (socketConnected) => {
 
@@ -59,16 +62,17 @@ socketServer.on("connection", (socketConnected) => {
     })
 
 
-    socketConnected.on("authenticated", (msg) => {
-        io.emit("messageHistory", messages);
-        socket.broadcast.emit("newUser", msg);
+    socketConnected.on("authenticated", async (msg) => {
+        const messages = await chatModel.find();
+        socketServer.emit("messageHistory", messages);
+        socketConnected.broadcast.emit("newUser", msg);
     });
 
-    socketConnected.on("message", (data) => {
+    socketConnected.on("message", async (data) => {
         console.log("Datos: ", data);
-        messages.push(data);
-
-        io.emit("messageHistory", messages);
+        const messageCreated = await chatModel.create(data);
+        const messages = await chatModel.find();
+        socketServer.emit("messageHistory", messages);
     });
 
 });

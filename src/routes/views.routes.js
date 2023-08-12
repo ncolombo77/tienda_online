@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { ProductManager } from "../dao/productManager.js";
+import { ProductsMongo } from "../dao/managers/mongo/productsMongo.js";
 
-const productService = new ProductManager('products.json');
+const productService = new ProductsMongo('products.json');
 
 const router = Router();
 
@@ -31,6 +31,14 @@ router.get("/realtimeproducts", async (req, res) => {
     }
 
 });
+
+
+router.get("/chat", async (req, res) => {
+
+    res.render("chat");
+
+});
+
 
 
 export { router as viewsRouter };
